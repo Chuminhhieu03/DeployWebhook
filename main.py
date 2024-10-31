@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request, Depends, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse, HTMLResponse
@@ -6,8 +6,9 @@ from pydantic import BaseModel
 import requests
 import os
 import base64
+import re
 from urllib.parse import quote
-from fastapi.websockets import WebSocket, WebSocketDisconnect
+from dotenv import load_dotenv
 
 # import url
 from api.url import router as api_url
@@ -19,7 +20,7 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="GUI/static"), name="static")
 app.include_router(api_url)
 app.include_router(webhook_router)
-
+load_dotenv()
 CLIENT_ID = os.getenv("ZOOM_CLIENT_ID")
 CLIENT_SECRET = os.getenv("ZOOM_CLIENT_SECRET")
 REDIRECT_URI = os.getenv("ZOOM_REDIRECT_URI")
@@ -27,6 +28,8 @@ credentials = f"{CLIENT_ID}:{CLIENT_SECRET}"
 ENCODE_CREDENTIAL = base64.b64encode(credentials.encode()).decode("utf-8")
 
 # render template
+
+
 @app.get("/home")
 async def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
@@ -35,14 +38,17 @@ async def home(request: Request):
 class TokenRequest(BaseModel):
     code: str
 
+
 @app.get("/login")
 async def login():
     redirect_uri = quote(REDIRECT_URI, safe="")
-    zoom_auth_url = f"https://zoom.us/oauth/authorize?response_type=code&client_id={CLIENT_ID}&redirect_uri={redirect_uri}"
+    zoom_auth_url = f"https://zoom.us/oauth/authorize?client_id={CLIENT_ID}&response_type=code&redirect_uri={redirect_uri}"
+    print(zoom_auth_url)
     return RedirectResponse(url=zoom_auth_url)
 
+
 @app.get("/oauth/callback")
-async def oauth_callback(request: Request,code: str):
+async def oauth_callback(request: Request, code: str):
     token_response = requests.post(
         "https://zoom.us/oauth/token",
         headers={
@@ -59,22 +65,13 @@ async def oauth_callback(request: Request,code: str):
         access_token = tokens.get("access_token")
         return templates.TemplateResponse("meeting_url_form.html", {"request": request, "access_token": access_token})
 
+
 @app.post("/start_meeting")
-async def start_meeting(request: Request):
-    form = await request.form()
-    access_token = form.get("access_token")
-    meeting_url = form.get("meeting_url")
-    return templates.TemplateResponse("meeting_history.html", {"request": request, "meeting_url": meeting_url})
+async def start_meeting(request: Request, meeting_url: str = Form(...), access_token: str = Form(...)):
+    # Extract meeting ID from URL
+    meeting_id = re.search(r"\/(\d+)", meeting_url)
+    meeting_id = meeting_id.group(1) if meeting_id else "Unknown"
 
-websocket_connections = []
+    # Pass meeting ID to template
+    return templates.TemplateResponse("meeting_history.html", {"request": request, "meeting_id": meeting_id})
 
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    websocket_connections.append(websocket)
-    try:
-        while True:
-            data = await websocket.receive_text()
-            await websocket.send_text(f"Message text was: {data}")
-    except WebSocketDisconnect:
-        websocket_connections.remove(websocket)

@@ -7,7 +7,7 @@ import os
 from dotenv import load_dotenv
 import datetime
 import paho.mqtt.client as mqtt
-from fastapi.websockets import WebSocket
+from fastapi.websockets import WebSocket, WebSocketDisconnect
 
 load_dotenv()
 
@@ -17,6 +17,8 @@ webhook_router = APIRouter()
 ZOOM_SECRET_TOKEN = os.environ.get("SECRET_TOKEN")
 
 websocket_connections = []
+connections = {}
+
 
 @webhook_router.post("/webhook")
 async def webhook(request: Request):
@@ -26,7 +28,8 @@ async def webhook(request: Request):
     # print(headers)
     print("Body", body)
 
-    if 'payload' in body and 'plainToken' in body['payload']: # Dùng để validated url trên link zoom webhook
+    # Dùng để validated url trên link zoom webhook
+    if 'payload' in body and 'plainToken' in body['payload']:
         secret_token = ZOOM_SECRET_TOKEN.encode("utf-8")
         plaintoken = body['payload']['plainToken']
         mess = plaintoken.encode("utf-8")
@@ -41,28 +44,46 @@ async def webhook(request: Request):
         }
         print(response['message'])
         return response['message']
-    
+
     payload = body.get('payload')
+    meeting_id = payload.get("payload", {}).get("object", {}).get("id")
     event = body.get('event')
     print(payload)
     print(event)
+    print(meeting_id)
+    print(connections)
     object_payload = payload['object']
-    print(object_payload)
+
     participant = object_payload['participant']
     name = participant['user_name']
-    
+
     if event == 'meeting.participant_joined':
         topic = 'zoom/participant/joined'
         if payload:
             joined_time = participant['join_time']
-            timestamp = datetime.datetime.fromisoformat(joined_time.replace("Z", "+00:00"))
+            timestamp = datetime.datetime.fromisoformat(
+                joined_time.replace("Z", "+00:00"))
             utc_plus_7 = timestamp + datetime.timedelta(hours=7)
             formatted_timestamp = utc_plus_7.strftime("[%d-%m-%Y %H:%M:%S]")
-            send_data = {"message": formatted_timestamp + " " + name + " đã tham gia cuộc họp"}
-            for connection in websocket_connections:
+            send_data = {"message": formatted_timestamp +
+                         " " + name + " đã tham gia cuộc họp"}
+            for connection in connections[meeting_id]:
                 await connection.send_text(json.dumps(send_data))
     elif event == 'meeting.participant_left':
-        topic = 'zoom/participant/left'
-        if payload:
-            for connection in websocket_connections:
-                await connection.send_text(json.dumps(payload))
+        for connection in connections[meeting_id]:
+            await connection.send_text(json.dumps(payload))
+
+
+@webhook_router.websocket("/ws/{meeting_id}")
+async def websocket_endpoint(websocket: WebSocket, meeting_id: str):
+    await websocket.accept()
+    # Add WebSocket connection to the meeting-specific list
+    if meeting_id not in connections:
+        connections[meeting_id] = []
+    connections[meeting_id].append(websocket)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            # Process incoming data if needed
+    except WebSocketDisconnect:
+        connections[meeting_id].remove(websocket)

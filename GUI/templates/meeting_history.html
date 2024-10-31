@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Meeting History</title>
 </head>
-
 <body>
     <h1>Meeting History</h1>
     <div id="history"></div>
     <script>
-        const ws = new WebSocket("ws://localhost:8000/ws");
+        // Replace with the correct meeting ID
+        const meetingId = "{{ meeting_id }}";
+        
+        // Connect to WebSocket with meeting ID
+        const ws = new WebSocket(`ws://https://deploywebhook.onrender.com/ws/${meetingId}`);
+        
         ws.onmessage = function (event) {
             const historyDiv = document.getElementById("history");
             const newMessage = document.createElement("div");
@@ -18,5 +21,4 @@
         };
     </script>
 </body>
-
 </html>
