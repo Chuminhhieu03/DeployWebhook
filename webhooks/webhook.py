@@ -24,7 +24,7 @@ client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
 client.connect(MQTT_BROKER, MQTT_PORT, keepalive=60)
 print(f"Đã kết nối tới MQTT broker: {MQTT_BROKER}")
 
-ZOOM_SECRET_TOKEN = os.environ.get("ZOOM_WEBHOOK_SECRET_TOKEN")
+ZOOM_SECRET_TOKEN = os.environ.get("SECRET_TOKEN")
 
 @webhook_router.post("/webhook")
 async def webhook(request: Request):
