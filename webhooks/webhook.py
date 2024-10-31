@@ -46,7 +46,7 @@ async def webhook(request: Request):
         return response['message']
 
     payload = body.get('payload')
-    meeting_id = payload.get("payload", {}).get("object", {}).get("id")
+    meeting_id = payload.get("object", {}).get("id")
     event = body.get('event')
     print(payload)
     print(event)
@@ -58,7 +58,6 @@ async def webhook(request: Request):
     name = participant['user_name']
 
     if event == 'meeting.participant_joined':
-        topic = 'zoom/participant/joined'
         if payload:
             joined_time = participant['join_time']
             timestamp = datetime.datetime.fromisoformat(
@@ -67,11 +66,16 @@ async def webhook(request: Request):
             formatted_timestamp = utc_plus_7.strftime("[%d-%m-%Y %H:%M:%S]")
             send_data = {"message": formatted_timestamp +
                          " " + name + " đã tham gia cuộc họp"}
+            # Ensure there is a list for this meeting_id
+            if meeting_id not in connections:
+                connections[meeting_id] = []
+                
             for connection in connections[meeting_id]:
                 await connection.send_text(json.dumps(send_data))
     elif event == 'meeting.participant_left':
-        for connection in connections[meeting_id]:
-            await connection.send_text(json.dumps(payload))
+        if meeting_id in connections:
+            for connection in connections[meeting_id]:
+                await connection.send_text(json.dumps(payload))
 
 
 @webhook_router.websocket("/ws/{meeting_id}")
