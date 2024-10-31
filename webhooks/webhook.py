@@ -52,7 +52,7 @@ async def webhook(request: Request):
     print(event)
     print(meeting_id)
     print(connections)
-    object_payload = payload['object']
+    object_payload = payload.get('object', {})
 
     participant = object_payload['participant']
     name = participant['user_name']

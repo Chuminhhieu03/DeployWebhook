@@ -11,7 +11,7 @@
         const meetingId = "{{ meeting_id }}";
         
         // Connect to WebSocket with meeting ID
-        const ws = new WebSocket(`ws://https://deploywebhook.onrender.com/ws/${meetingId}`);
+        const ws = new WebSocket(`wss://https://deploywebhook.onrender.com/ws/${meetingId}`);
         
         ws.onmessage = function (event) {
             const historyDiv = document.getElementById("history");
