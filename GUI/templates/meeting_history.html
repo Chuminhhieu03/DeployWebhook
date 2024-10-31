@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Meeting History</title>
+</head>
+
+<body>
+    <h1>Meeting History</h1>
+    <div id="history"></div>
+    <script>
+        const ws = new WebSocket("ws://localhost:8000/ws");
+        ws.onmessage = function (event) {
+            const historyDiv = document.getElementById("history");
+            const newMessage = document.createElement("div");
+            newMessage.textContent = event.data;
+            historyDiv.appendChild(newMessage);
+        };
+    </script>
+</body>
+
+</html>

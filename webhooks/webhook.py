@@ -7,24 +7,16 @@ import os
 from dotenv import load_dotenv
 import datetime
 import paho.mqtt.client as mqtt
+from fastapi.websockets import WebSocket
 
 load_dotenv()
 
 webhook_router = APIRouter()
 
-MQTT_BROKER = os.environ.get('MQTT_BROKER')  
-MQTT_PORT = int(os.environ.get("MQTT_PORT"))               
-MQTT_USERNAME = os.environ.get('MQTT_USERNAME')  
-MQTT_PASSWORD = os.environ.get('MQTT_PASSWORD') 
-print(MQTT_BROKER, MQTT_PORT, MQTT_USERNAME, MQTT_PASSWORD)
-client = mqtt.Client()
-
-client.tls_set(tls_version=mqtt.ssl.PROTOCOL_TLS)
-client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
-client.connect(MQTT_BROKER, MQTT_PORT, keepalive=60)
-print(f"Đã kết nối tới MQTT broker: {MQTT_BROKER}")
 
 ZOOM_SECRET_TOKEN = os.environ.get("SECRET_TOKEN")
+
+websocket_connections = []
 
 @webhook_router.post("/webhook")
 async def webhook(request: Request):
@@ -67,10 +59,10 @@ async def webhook(request: Request):
             utc_plus_7 = timestamp + datetime.timedelta(hours=7)
             formatted_timestamp = utc_plus_7.strftime("[%d-%m-%Y %H:%M:%S]")
             send_data = {"message": formatted_timestamp + " " + name + " đã tham gia cuộc họp"}
-            client.publish(topic, json.dumps(send_data))
-            print(f"Đã gửi dữ liệu tới {topic}: {payload}")
+            for connection in websocket_connections:
+                await connection.send_text(json.dumps(send_data))
     elif event == 'meeting.participant_left':
         topic = 'zoom/participant/left'
         if payload:
-            client.publish(topic, json.dumps(payload))
-            print(f"Đã gửi dữ liệu tới {topic}: {payload}")
+            for connection in websocket_connections:
+                await connection.send_text(json.dumps(payload))

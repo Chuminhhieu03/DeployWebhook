@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Enter Zoom Meeting URL</title>
+</head>
+<body>
+    <h1>Enter Zoom Meeting URL</h1>
+    <form action="/start_meeting" method="post">
+        <input type="hidden" name="access_token" value="{{ access_token }}">
+        <label for="meeting_url">Meeting URL:</label>
+        <input type="text" id="meeting_url" name="meeting_url" required>
+        <button type="submit">Start Meeting</button>
+    </form>
+</body>
+</html>
