@@ -1,0 +1,75 @@
+<div class="sidebar">
+    <div class="sidebar-box">
+        <button id="create-meeting-btn">Đăng ký cuộc họp mới</button>
+        <h3>Cuộc họp hiện có</h3>
+        <table id="current-meetings-table">
+            <thead>
+                <tr>
+                    <th>Chủ đề</th>
+                    <th>Thời gian bắt đầu</th>
+                    <th>Thời lượng (phút)</th>
+                    <th>Quản lý</th>
+                    <th>Tham gia</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Meetings will be populated here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+    <div class="sidebar-box">
+        <h3>Danh sách cuộc họp chuẩn bị đến</h3>
+        <table id="upcoming-meetings-table">
+            <thead>
+                <tr>
+                    <th>Chủ đề</th>
+                    <th>Thời gian bắt đầu</th>
+                    <th>Thời lượng (phút)</th>
+                    <th>Quản lý</th>
+                    <th>Tham gia</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Meetings will be populated here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal for creating a new meeting -->
+<div id="create-meeting-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Tạo cuộc họp mới</h2>
+        <form id="create-meeting-form">
+            <label for="topic">Chủ đề:</label>
+            <input type="text" id="topic" name="topic" required>
+
+            <label for="start_time">Thời gian bắt đầu:</label>
+            <input type="datetime-local" id="start_time" name="start_time" required>
+
+            <label for="duration">Thời lượng (phút):</label>
+            <input type="number" id="duration" name="duration" required>
+
+            <label for="timezone">Múi giờ:</label>
+            <input type="text" id="timezone" name="timezone" required>
+
+            <label for="agenda">Nội dung:</label>
+            <textarea id="agenda" name="agenda" required></textarea>
+
+            <label for="type">Loại cuộc họp:</label>
+            <select id="type" name="type" required>
+                <option value="1">Instant Meeting</option>
+                <option value="2">Scheduled Meeting</option>
+                <option value="3">Recurring Meeting with no fixed time</option>
+                <option value="8">Recurring Meeting with fixed time</option>
+            </select>
+
+            <label for="invitees">Email người tham gia (cách nhau bởi dấu phẩy):</label>
+            <input type="text" id="invitees" name="invitees" required>
+
+            <button type="submit">Tạo cuộc họp</button>
+        </form>
+    </div>
+</div>
+
