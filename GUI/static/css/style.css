@@ -1,0 +1,79 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #003366;
+    /* Chủ đạo màu xanh đậm */
+    color: #ffffff;
+    /* Chữ trắng */
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.content {
+    padding: 20px;
+    text-align: center;
+}
+
+button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}   
+
+h1 {
+    margin: 0;
+    font-size: 2em;
+    color: #ffffff;
+}
+
+#meeting-id {
+    font-size: 1.2em;
+    margin: 10px 0;
+    color: #cccccc;
+}
+
+#history {
+    border: 2px solid #000000;
+    /* Viền nền đen */
+    background-color: #001f3f;
+    /* Màu xanh đậm cho nền */
+    color: #ffffff;
+    width: 80%;
+    /* Chiều dài cố định */
+    max-height: 400px;
+    /* Giới hạn chiều cao */
+    overflow-y: auto;
+    /* Thanh cuộn khi vượt quá chiều cao */
+    padding: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    /* Hiệu ứng đổ bóng nhẹ */
+}
+
+#history div {
+    padding: 5px;
+    border-bottom: 1px solid #666666;
+    /* Đường ngăn giữa các dòng */
+}
+
+#history div:last-child {
+    border-bottom: none;
+    /* Loại bỏ đường viền cuối cùng */
+}

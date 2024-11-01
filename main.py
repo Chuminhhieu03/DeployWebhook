@@ -36,12 +36,18 @@ async def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
+@app.get("/")
+async def home(request: Request):
+    return templates.TemplateResponse("home.html", {"request": request})
+
+
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     while True:
         data = await websocket.receive_text()
         await websocket.send_text(f"Message text was: {data}")
+
 
 class TokenRequest(BaseModel):
     code: str
@@ -82,4 +88,3 @@ async def start_meeting(request: Request, meeting_url: str = Form(...), access_t
 
     # Pass meeting ID to template
     return templates.TemplateResponse("meeting_history.html", {"request": request, "meeting_id": meeting_id})
-

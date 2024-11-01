@@ -1,34 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meeting History</title>
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-    <h1>Meeting History</h1>
-    <div id="history"></div>
-    <script>
-        // Replace with the correct meeting ID
-        const meetingId = "{{ meeting_id }}";
-        
-        // Connect to WebSocket with meeting ID
-        const ws = new WebSocket(`wss://deploywebhook.onrender.com/ws/${meetingId}`);
-        const wsNew = new WebSocket(`wss://deploywebhook.onrender.com/ws`);
-        
-        ws.onmessage = function (event) {
-            const historyDiv = document.getElementById("history");
-            const newMessage = document.createElement("div");
-            newMessage.textContent = event.data;
-            historyDiv.appendChild(newMessage);
-        };
-
-        wsNew.onmessage = function (event) {
-            const historyDiv = document.getElementById("history");
-            const newMessage = document.createElement("div");
-            newMessage.textContent = event.data;
-            historyDiv.appendChild(newMessage);
-        };
-
-        
-    </script>
+        <h1>Meeting History</h1>
+        <h2>Meeting ID: 1232198u8</h2>
+        <div id="history">
+            <div>{"message": "[01-11-2024 10:54:33] Khanh Nguyen Quoc \u0111\u00e3 tham gia cu\u1ed9c h\u1ecdp"}</div>
+            <div>{"message": "[01-11-2024 10:54:33] Khanh Nguyen Quoc \u0111\u00e3 tham gia cu\u1ed9c h\u1ecdp"}</div>
+            <div>{"message": "[01-11-2024 10:54:33] Khanh Nguyen Quoc \u0111\u00e3 tham gia cu\u1ed9c h\u1ecdp"}</div>
+            <div>{"message": "[01-11-2024 10:54:33] Khanh Nguyen Quoc \u0111\u00e3 tham gia cu\u1ed9c h\u1ecdp"}</div>
+            <div>{"message": "[01-11-2024 10:54:33] Khanh Nguyen Quoc \u0111\u00e3 tham gia cu\u1ed9c h\u1ecdp"}</div>
+            <div>{"message": "[01-11-2024 10:54:33] Khanh Nguyen Quoc \u0111\u00e3 tham gia cu\u1ed9c h\u1ecdp"}</div>
+            <div>{"message": "[01-11-2024 10:54:33] Khanh Nguyen Quoc \u0111\u00e3 tham gia cu\u1ed9c h\u1ecdp"}</div>
+            <div>{"message": "[01-11-2024 10:54:33] Khanh Nguyen Quoc \u0111\u00e3 tham gia cu\u1ed9c h\u1ecdp"}</div>
+            <div>{"message": "[01-11-2024 10:54:33] Khanh Nguyen Quoc \u0111\u00e3 tham gia cu\u1ed9c h\u1ecdp"}</div>
+            <div>{"message": "[01-11-2024 10:54:33] Khanh Nguyen Quoc \u0111\u00e3 tham gia cu\u1ed9c h\u1ecdp"}</div>
+            <div>{"message": "[01-11-2024 10:54:33] Khanh Nguyen Quoc \u0111\u00e3 tham gia cu\u1ed9c h\u1ecdp"}</div>
+            <div>{"message": "[01-11-2024 10:54:33] Khanh Nguyen Quoc \u0111\u00e3 tham gia cu\u1ed9c h\u1ecdp"}</div>
+            <div>{"message": "[01-11-2024 10:54:33] Khanh Nguyen Quoc \u0111\u00e3 tham gia cu\u1ed9c h\u1ecdp"}</div>
+            <div>{"message": "[01-11-2024 10:54:33] Khanh Nguyen Quoc \u0111\u00e3 tham gia cu\u1ed9c h\u1ecdp"}</div>
+            <div>{"message": "[01-11-2024 10:54:33] Khanh Nguyen Quoc \u0111\u00e3 tham gia cu\u1ed9c h\u1ecdp"}</div>
+            <div>{"message": "[01-11-2024 10:54:33] Khanh Nguyen Quoc \u0111\u00e3 tham gia cu\u1ed9c h\u1ecdp"}</div>
+            <div>{"message": "[01-11-2024 10:54:33] Khanh Nguyen Quoc \u0111\u00e3 tham gia cu\u1ed9c h\u1ecdp"}</div>
+            <div>{"message": "[01-11-2024 10:54:33] Khanh Nguyen Quoc \u0111\u00e3 tham gia cu\u1ed9c h\u1ecdp"}</div>
+            <div>{"message": "[01-11-2024 10:54:33] Khanh Nguyen Quoc \u0111\u00e3 tham gia cu\u1ed9c h\u1ecdp"}</div>
+            <div>{"message": "[01-11-2024 10:54:33] Khanh Nguyen Quoc \u0111\u00e3 tham gia cu\u1ed9c h\u1ecdp"}</div>
+        </div>
+        <script>
+            // Replace with the correct meeting ID
+            const meetingId = "{{ meeting_id }}";        
+            // Connect to WebSocket with meeting ID
+            const ws = new WebSocket(`wss://deploywebhook.onrender.com/ws/${meetingId}`);
+            ws.onmessage = function (event) {
+                const historyDiv = document.getElementById("history");
+                const newMessage = document.createElement("div");
+                newMessage.textContent = event.data;
+                historyDiv.appendChild(newMessage);
+            };
+            
+        </script>
 </body>
 </html>
