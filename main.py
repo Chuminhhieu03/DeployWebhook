@@ -85,6 +85,5 @@ async def start_meeting(request: Request, meeting_url: str = Form(...), access_t
     # Extract meeting ID from URL
     meeting_id = re.search(r"\/(\d+)", meeting_url)
     meeting_id = meeting_id.group(1) if meeting_id else "Unknown"
-
     # Pass meeting ID to template
     return templates.TemplateResponse("meeting_history.html", {"request": request, "meeting_id": meeting_id})
