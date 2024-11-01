@@ -12,6 +12,7 @@
         
         // Connect to WebSocket with meeting ID
         const ws = new WebSocket(`wss://deploywebhook.onrender.com/ws/${meetingId}`);
+        const wsNew = new WebSocket(`wss://deploywebhook.onrender.com/ws`);
         
         ws.onmessage = function (event) {
             const historyDiv = document.getElementById("history");
@@ -19,6 +20,15 @@
             newMessage.textContent = event.data;
             historyDiv.appendChild(newMessage);
         };
+
+        wsNew.onmessage = function (event) {
+            const historyDiv = document.getElementById("history");
+            const newMessage = document.createElement("div");
+            newMessage.textContent = event.data;
+            historyDiv.appendChild(newMessage);
+        };
+
+        
     </script>
 </body>
 </html>

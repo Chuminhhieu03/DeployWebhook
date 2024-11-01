@@ -9,6 +9,7 @@ import base64
 import re
 from urllib.parse import quote
 from dotenv import load_dotenv
+from fastapi import FastAPI, Request, WebSocket
 
 # import url
 from api.url import router as api_url
@@ -34,6 +35,13 @@ ENCODE_CREDENTIAL = base64.b64encode(credentials.encode()).decode("utf-8")
 async def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        data = await websocket.receive_text()
+        await websocket.send_text(f"Message text was: {data}")
 
 class TokenRequest(BaseModel):
     code: str
