@@ -1,29 +1,31 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="zoom-domain-verification" content="ZOOM_verify_83b4e323418644c2b17b2ad15cd78c00">
     <title>Meeting History</title>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
+
 <body>
-        <h1>Meeting History</h1>
-        <h2>Meeting ID: {{meeting_id}}</h2>
-        <div id="history">
-        </div>
-        <script>
-            // Replace with the correct meeting ID
-            const meetingId = "{{ meeting_id }}";        
-            // Connect to WebSocket with meeting ID
-            const ws = new WebSocket(`wss://deploywebhook.onrender.com/ws/${meetingId}`);
-            ws.onmessage = function (event) {
-                const historyDiv = document.getElementById("history");
-                const newMessage = document.createElement("div");
-                newMessage.textContent = event.data;
-                historyDiv.appendChild(newMessage);
-            };
-            
-        </script>
+    <h1>Meeting History</h1>
+    <h2>Meeting ID: {{meeting_id}}</h2>
+    <div id="history">
+    </div>
+    <script>
+        // Replace with the correct meeting ID
+        const meetingId = "{{ meeting_id }}";
+        // Connect to WebSocket with meeting ID
+        const ws = new WebSocket(`wss://deploywebhook.onrender.com/ws/${meetingId}`);
+        ws.onmessage = function (event) {
+            const historyDiv = document.getElementById("history");
+            const newMessage = document.createElement("div");
+            const data = JSON.parse(event.data); // Decode JSON
+            newMessage.textContent = data.message; // Assuming the JSON has a 'message' field
+            historyDiv.appendChild(newMessage);
+        }; 
+    </script>
 </body>
+
 </html>
