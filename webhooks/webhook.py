@@ -6,7 +6,7 @@ import hashlib
 import os
 from dotenv import load_dotenv
 import datetime
-import paho.mqtt.client as mqtt
+import time
 from fastapi.websockets import WebSocket, WebSocketDisconnect
 
 load_dotenv()
@@ -18,6 +18,7 @@ ZOOM_SECRET_TOKEN = os.environ.get("SECRET_TOKEN")
 
 websocket_connections = []
 connections = {}
+event_cache = {}
 
 
 @webhook_router.post("/webhook")
@@ -45,6 +46,14 @@ async def webhook(request: Request):
         print(response['message'])
         return response['message']
 
+    event_ts = body.get("event_ts")
+
+    if event_ts in event_cache:
+        print("Sự kiện đã nhận trước đó, bỏ qua...")
+        return {"message": "Event already processed"}
+    
+    event_cache[event_ts] = time.time()
+
     payload = body.get('payload')
     meeting_id = payload.get("object", {}).get("id")
     event = body.get('event')
@@ -71,10 +80,16 @@ async def webhook(request: Request):
     elif event == 'meeting.participant_left':
         send_data = {"message": f"{formatted_timestamp} {name} đã rời khỏi cuộc họp."}
 
+    if meeting_id not in connections:
+            connections[meeting_id] = []
+
     # Gửi dữ liệu tới các kết nối WebSocket nếu tồn tại
     if send_data and meeting_id in connections:
-        for connection in connections[meeting_id]:
+        for connection in connections[meeting_id]:  
             await connection.send_text(json.dumps(send_data, ensure_ascii=False))
+
+    event_cache = {k: v for k, v in event_cache.items() if time.time() - v < 60}
+    return {"message": "Event processed successfully"}
 
 @webhook_router.websocket("/ws/{meeting_id}")
 async def websocket_endpoint(websocket: WebSocket, meeting_id: str):
