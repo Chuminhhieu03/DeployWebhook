@@ -24,7 +24,7 @@ event_cache = {}
 @webhook_router.post("/webhook")
 async def webhook(request: Request):
     # print(ZOOM_SECRET_TOKEN)
-    headers = dict(request.headers)
+    global event_cache
     body = await request.json()
     # print(headers)
     print("Body", body)
